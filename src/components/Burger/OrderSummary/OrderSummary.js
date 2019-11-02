@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import classes from './OrderSummary.css';
-import Aux from "../../../hoc/Aux1/Aux";
+import Ayx from "../../../huk/Ayx/Ayx";
 import Button from '../../UI/Button/Button';
 
 class OrderSummary extends Component {
@@ -21,7 +21,7 @@ class OrderSummary extends Component {
         })
 
         return (
-            <Aux>
+            <Ayx>
                 <h3>Your Order</h3>
                 <p>A delicius burger with the following ingredients:</p>
                 <ul>
@@ -31,7 +31,7 @@ class OrderSummary extends Component {
                 <p><strong>Total Price: {this.props.price.toFixed(2)}</strong></p>
                 <Button btnType='Danger' clicked={this.props.purchaseCancelled}>CANCEL</Button>
                 <Button btnType='Success' clicked={this.props.purchaseContinued}>CONTINUE</Button>
-            </Aux>
+            </Ayx>
         )
     }
 }
