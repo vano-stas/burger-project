@@ -48,7 +48,8 @@ class ContactData extends Component {
         validation: {
           required: true,
           minLength: 5,
-          maxLength: 5
+          maxLength: 5,
+          isNumeric: true
         },
         valid: false,
         touched: false
@@ -74,7 +75,8 @@ class ContactData extends Component {
         },
         value: '',
         validation: {
-          required: true
+          required: true,
+          isEmail: true
         },
         valid: false,
         touched: false
@@ -82,9 +84,9 @@ class ContactData extends Component {
       deliveryMethod: {
         elementType: 'select',
         elementConfig: {
-         options: [
-           {value: 'fastest', displayValue: 'Fastest'},
-           {value: 'cheapest', displayValue: 'Cheapest'}
+          options: [
+            { value: 'fastest', displayValue: 'Fastest' },
+            { value: 'cheapest', displayValue: 'Cheapest' }
           ]
         },
         value: 'fastest',
@@ -107,7 +109,7 @@ class ContactData extends Component {
       orderData: formData
     };
 
-    this.props.onOrderBurger(order);
+    this.props.onOrderBurger(order, this.props.token);
   }
 
   checkValidity(value, rules) {
@@ -128,6 +130,16 @@ class ContactData extends Component {
       isValid = value.length <= rules.maxLength && isValid;
     }
 
+    if (rules.isEmail) {
+      const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+      isValid = pattern.test(value) && isValid
+    }
+
+    if (rules.isNumeric) {
+      const pattern = /^\d+$/;
+      isValid = pattern.test(value) && isValid
+    }
+
     return isValid;
   }
 
@@ -143,17 +155,17 @@ class ContactData extends Component {
     updatedFormElement.touched = true;
 
     let formIsValid = true;
-    for ( let inputIdentifier in updatedOrderForm) {
+    for (let inputIdentifier in updatedOrderForm) {
       formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid
     }
 
     updatedOrderForm[inputIdentifier] = updatedFormElement;
-    this.setState({orderForm: updatedOrderForm, formIsValid: formIsValid});
+    this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
   }
 
   render() {
     const formElementsArray = [];
-    for ( let key in this.state.orderForm) {
+    for (let key in this.state.orderForm) {
       formElementsArray.push({
         id: key,
         config: this.state.orderForm[key]
@@ -174,7 +186,7 @@ class ContactData extends Component {
         ))}
         <Button btnType='Success' disabled={!this.state.formIsValid}>ORDER</Button>
       </form>
-    ) ;
+    );
     if (this.props.loading) {
       form = <Spinner />
     }
@@ -191,13 +203,14 @@ const mapStateToProps = state => {
   return {
     ings: state.burgerBuilder.ingredients,
     price: state.burgerBuilder.totalPrice,
-    loading: state.order.loading
+    loading: state.order.loading,
+    token: state.auth.token
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
+    onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
   }
 }
 
